@@ -18,8 +18,8 @@ const Main = () => {
            {!showResult
            ? <>
            <div className="greet">
-                <p><span>Hello, Bro</span></p>
-                <p>What do you want to know today?</p>
+                <p><span>Hello, Bal Buddhi</span></p>
+                <p>Ajj Kya Poochega?</p>
             </div>
             <div className="cards">
                     <div className="card">
@@ -64,11 +64,11 @@ const Main = () => {
                 <div className="search-box">
                     <input onChange={(e)=>setInput(e.target.value)}  
                     value={input}
-                    type="text" placeholder='Enter a prompt' />
+                    type="text" placeholder='likh jo poochna h' />
                     <div>
                         <img src={assets.gallery_icon} alt="" />
                         <img src={assets.mic_icon} alt="" />
-                        <img   onClick={()=>onSent()} src={assets.send_icon} alt="" />
+                        {input?<img   onClick={()=>onSent()} src={assets.send_icon} alt="" />:null}
                     </div>
                 </div>
                 <p className="bottom-info">
