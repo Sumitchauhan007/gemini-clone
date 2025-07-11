@@ -19,16 +19,21 @@ const ContextProvider = (props) => {
 
   const onSent = async (prompt) => {
     
-
     setResultData("");
     setLoading(true);
     setShowResult(true);
-    setRecentPrompt(input);
-    setPrevPrompts((prev) => [...prev, input]);
+    let response;
+    if(prompt !== undefined){
+      response = await runChat(prompt);
+      setRecentPrompt(prompt)
+    }
+    else{
+        setPrevPrompts(prev =>[...prev,input])
+    }
+    
 
     try {
-      const response = await runChat(input);
-
+      
       // Step 1: Convert markdown-like text to HTML with <br> and <strong>
       let responseArray = response.split("**");
       let formattedResponse = "";
