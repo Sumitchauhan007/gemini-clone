@@ -1,3 +1,5 @@
+// /context/ContextProvider.jsx
+
 import React, { useState, createContext } from "react";
 import runChat from "../config/gemini";
 
@@ -14,34 +16,37 @@ const ContextProvider = (props) => {
   const delayPara = (index, nextChar) => {
     setTimeout(() => {
       setResultData((prev) => prev + nextChar);
-    }, 20 * index); // reduced for smoother animation
+    }, 20 * index); // animation speed
   };
 
   const newChat = () => {
-    setLoading(false)
-    setShowResult(false)
-  }
+    setLoading(false);
+    setShowResult(false);
+  };
 
   const onSent = async (prompt) => {
-    
     setResultData("");
     setLoading(true);
     setShowResult(true);
+
     let response;
-    if(prompt !== undefined){
-      response = await runChat(prompt);
-      setRecentPrompt(prompt)
-    }
-    else{
-        setPrevPrompts(prev =>[...prev,input])
-        setRecentPrompt(input)
-        response = await runChat()
-    }
-    
 
     try {
-      
-      // Step 1: Convert markdown-like text to HTML with <br> and <strong>
+      if (prompt !== undefined) {
+        response = await runChat(prompt);
+        setRecentPrompt(prompt);
+      } else {
+        if (!input.trim()) {
+          setResultData("Please enter a prompt.");
+          setLoading(false);
+          return;
+        }
+        setPrevPrompts((prev) => [...prev, input]);
+        setRecentPrompt(input);
+        response = await runChat(input);
+      }
+
+      // Convert markdown-like to HTML
       let responseArray = response.split("**");
       let formattedResponse = "";
 
@@ -53,15 +58,12 @@ const ContextProvider = (props) => {
         }
       }
 
-      // Step 2: Replace remaining `*` with line breaks
       formattedResponse = formattedResponse.replace(/\*/g, "<br>");
 
-      // Step 3: Animate character-by-character
       const chars = formattedResponse.split("");
       chars.forEach((char, i) => delayPara(i, char));
-
     } catch (error) {
-      console.error("Error from Gemini:", error);
+      console.error("Error from Gemini:", error.message);
       setResultData("Something went wrong. Please try again.");
     }
 
@@ -83,7 +85,7 @@ const ContextProvider = (props) => {
     resultData,
     setResultData,
     onSent,
-    newChat
+    newChat,
   };
 
   return (
